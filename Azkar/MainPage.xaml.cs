@@ -1,0 +1,331 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Timers;
+using Azkar.Apps_Interface;
+using Azkar.Models;
+using Plugin.Geolocator;
+using Xamarin.Essentials;
+using Xamarin.Forms;
+
+namespace Azkar
+{
+    public partial class MainPage : ContentPage
+    {
+        private static System.Timers.Timer aTimer;
+        int i = 0;
+        public MainPage()
+        {
+            InitializeComponent();
+            aTimer = new System.Timers.Timer(10000);
+            // Hook up the Elapsed event for the timer.
+            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            // Set the Interval to 2 seconds (2000 milliseconds).
+            aTimer.Interval = 1000;
+            aTimer.Enabled = true;
+          //  aTimer.Start();
+
+            if (Device.RuntimePlatform == Device.Android)
+            {
+                MessagingCenter.Subscribe<AzkarMessage>(this, "Azkar", message =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                     //   locationLabel.Text += $"{Environment.NewLine}{message.AzkarText2}";
+
+                    });
+                });
+
+                MessagingCenter.Subscribe<StopServiceMessage>(this, "ServiceStopped", message =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {  
+                      
+                        DependencyService.Get<Toasts>().Show("تم إيقاف خدمة الأذكار!");
+                      
+                    });
+                });
+
+                MessagingCenter.Subscribe<LocationErrorMessage>(this, "LocationError", message =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        DependencyService.Get<Toasts>().Show("There was an error updating location!");
+                    });
+                });
+
+                if (Preferences.Get("AzkarServiceRunning", false) == true)
+                {
+                    StartService();
+
+                }
+
+            }
+        }
+      
+        private void OnTimedEvent(object sender, ElapsedEventArgs e)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Times.Text = DateTime.Now.ToString("hh:mm:ss");
+
+                // Code to run on the main thread
+                int Hours = DateTime.Now.Hour;
+                switch (Hours)
+                {
+                    case 0:
+                        string azkar0 = "أسْتَغْفِرُ اللهَ العَظِيمَ الَّذِي لاَ إلَهَ إلاَّ هُوَ، الحَيُّ القَيُّومُ، وَأتُوبُ إلَيهِ. ";
+                        Azkar1.Text = azkar0;
+
+
+                        break;
+                    case 1:
+                        string azkar1 = "اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ على نَبِيِّنَا مُحمَّد. ";
+                        Azkar1.Text = azkar1;
+
+                        break;
+
+                    case 2:
+                        string azkar2 = "اللّهُـمَّ ما أَصْبَـَحَ بي مِـنْ نِعْـمَةٍ أَو بِأَحَـدٍ مِـنْ خَلْـقِك ، فَمِـنْكَ وَحْـدَكَ لا شريكَ لَـك ، فَلَـكَ الْحَمْـدُ وَلَـكَ الشُّكْـر. ";
+                        Azkar1.Text = azkar2;
+
+                        break;
+                    case 3:
+                        string azkar3 = "حَسْبِـيَ اللّهُ لا إلهَ إلاّ هُوَ عَلَـيهِ تَوَكَّـلتُ وَهُوَ رَبُّ العَرْشِ العَظـيم. ";
+                        Azkar1.Text = azkar3;
+
+                        break;
+                    case 4:
+                        string azkar4 = "بِسـمِ اللهِ الذي لا يَضُـرُّ مَعَ اسمِـهِ شَيءٌ في الأرْضِ وَلا في السّمـاءِ وَهـوَ السّمـيعُ العَلـيم.";
+                        Azkar1.Text = azkar4;
+
+                        break;
+                    case 5:
+                        string azkar5 = @"
+اللّهُـمَّ بِكَ أَصْـبَحْنا وَبِكَ أَمْسَـينا ، وَبِكَ نَحْـيا وَبِكَ نَمُـوتُ وَإِلَـيْكَ النُّـشُور.
+أَعُوذُ بِاللهِ مِنْ الشَّيْطَانِ الرَّجِيمِ 
+)اللّهُ لاَ إِلَـهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ لاَ تَأْخُذُهُ سِنَةٌ وَلاَ نَوْمٌ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الأَرْضِ مَن ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلاَّ بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلاَ يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلاَّ بِمَا شَاء وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالأَرْضَ وَلاَ يَؤُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ).  [آية الكرسى - البقرة 255].
+" + "( بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم (قُلْ هُوَ ٱللَّهُ أَحَدٌ، ٱللَّهُ ٱلصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ." +
+    "(بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم (قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ، مِن شَرِّ مَا خَلَقَ، وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ، وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ." +
+    "(بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم (قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ، مَلِكِ ٱلنَّاسِ، إِلَٰهِ ٱلنَّاسِ، مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ، ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ، مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ)." + "أَصْـبَحْنا وَأَصْـبَحَ المُـلْكُ لله وَالحَمدُ لله ، لا إلهَ إلاّ اللّهُ وَحدَهُ لا شَريكَ لهُ، لهُ المُـلكُ ولهُ الحَمْـد، وهُوَ على كلّ شَيءٍ قدير ، رَبِّ أسْـأَلُـكَ خَـيرَ ما في هـذا اليوم وَخَـيرَ ما بَعْـدَه ، وَأَعـوذُ بِكَ مِنْ شَـرِّ ما في هـذا اليوم وَشَرِّ ما بَعْـدَه، رَبِّ أَعـوذُبِكَ مِنَ الْكَسَـلِ وَسـوءِ الْكِـبَر ، رَبِّ أَعـوذُ بِكَ مِنْ عَـذابٍ في النّـارِ وَعَـذابٍ في القَـبْر"
+    ;
+                        Azkar1.Text = azkar5;
+
+                        break;
+
+                    case 6:
+                        string azkar6 = "اللّهـمَّ أَنْتَ رَبِّـي لا إلهَ إلاّ أَنْتَ ، خَلَقْتَنـي وَأَنا عَبْـدُك ، وَأَنا عَلـى عَهْـدِكَ وَوَعْـدِكَ ما اسْتَـطَعْـت ، أَعـوذُبِكَ مِنْ شَـرِّ ما صَنَـعْت ، أَبـوءُ لَـكَ بِنِعْـمَتِـكَ عَلَـيَّ وَأَبـوءُ بِذَنْـبي فَاغْفـِرْ لي فَإِنَّـهُ لا يَغْـفِرُ الذُّنـوبَ إِلاّ أَنْتَ .";
+                        Azkar1.Text = azkar6;
+
+
+                        break;
+                    case 7:
+                        string azkar7 = "اللّهـمَّ أَنْتَ رَبِّـي لا إلهَ إلاّ أَنْتَ ، خَلَقْتَنـي وَأَنا عَبْـدُك ، وَأَنا عَلـى عَهْـدِكَ وَوَعْـدِكَ ما اسْتَـطَعْـت ، أَعـوذُبِكَ مِنْ شَـرِّ ما صَنَـعْت ، أَبـوءُ لَـكَ بِنِعْـمَتِـكَ عَلَـيَّ وَأَبـوءُ بِذَنْـبي فَاغْفـِرْ لي فَإِنَّـهُ لا يَغْـفِرُ الذُّنـوبَ إِلاّ أَنْتَ .";
+                        Azkar1.Text = azkar7;
+
+                        break;
+                    case 8:
+                        string azkar8 = "رَضيـتُ بِاللهِ رَبَّـاً وَبِالإسْلامِ ديـناً وَبِمُحَـمَّدٍ صلى الله عليه وسلم نَبِيّـاً.";
+                        Azkar1.Text = azkar8;
+
+                        break;
+                    case 9:
+                        string azkar9 = "اللّهُـمَّ إِنِّـي أَصْبَـحْتُ أُشْـهِدُك ، وَأُشْـهِدُ حَمَلَـةَ عَـرْشِـك ، وَمَلَائِكَتَكَ ، وَجَمـيعَ خَلْـقِك ، أَنَّـكَ أَنْـتَ اللهُ لا إلهَ إلاّ أَنْـتَ وَحْـدَكَ لا شَريكَ لَـك ، وَأَنَّ ُ مُحَمّـداً عَبْـدُكَ وَرَسـولُـك. ";
+                        Azkar1.Text = azkar9;
+
+                        break;
+
+                    case 10:
+                        string azkar10 = "اللّهُـمَّ عافِـني في بَدَنـي ، اللّهُـمَّ عافِـني في سَمْـعي ، اللّهُـمَّ عافِـني في بَصَـري ، لا إلهَ إلاّ أَنْـتَ. ";
+                        Azkar1.Text = azkar10;
+
+                        break;
+                    case 11:
+                        string azkar11 = "سُبْحـانَ اللهِ وَبِحَمْـدِهِ عَدَدَ خَلْـقِه ، وَرِضـا نَفْسِـه ، وَزِنَـةَ عَـرْشِـه ، وَمِـدادَ كَلِمـاتِـه.";
+                        Azkar1.Text = azkar11;
+
+                        break;
+                    case 12:
+                        string azkar12 = "اللّهُـمَّ إِنّـي أَعـوذُ بِكَ مِنَ الْكُـفر ، وَالفَـقْر ، وَأَعـوذُ بِكَ مِنْ عَذابِ القَـبْر ، لا إلهَ إلاّ أَنْـتَ. ";
+                        Azkar1.Text = azkar12;
+
+                        break;
+                    case 13:
+                        string azkar13 = "اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في الدُّنْـيا وَالآخِـرَة ، اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في ديني وَدُنْـيايَ وَأهْـلي وَمالـي ، اللّهُـمَّ اسْتُـرْ عـوْراتي وَآمِـنْ رَوْعاتـي ، اللّهُـمَّ احْفَظْـني مِن بَـينِ يَدَيَّ وَمِن خَلْفـي وَعَن يَمـيني وَعَن شِمـالي ، وَمِن فَوْقـي ، وَأَعـوذُ بِعَظَمَـتِكَ أَن أُغْـتالَ مِن تَحْتـي. ";
+                        Azkar1.Text = azkar13;
+
+                        break;
+                    case 14:
+                        string azkar14 = "يَا حَيُّ يَا قيُّومُ بِرَحْمَتِكَ أسْتَغِيثُ أصْلِحْ لِي شَأنِي كُلَّهُ وَلاَ تَكِلْنِي إلَى نَفْسِي طَـرْفَةَ عَيْنٍ. ";
+                        Azkar1.Text = azkar14;
+
+                        break;
+                    case 15:
+                        string azkar15 = "أَعـوذُ بِكَلِمـاتِ اللّهِ التّـامّـاتِ مِنْ شَـرِّ ما خَلَـق. ";
+                        Azkar1.Text = azkar15;
+
+                        break;
+                    case 16:
+                        string azkar16 = "اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ على نَبِيِّنَا مُحمَّد. ";
+                        Azkar1.Text = azkar16;
+
+                        break;
+                    case 17:
+                        string azkar17 = "اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ على نَبِيِّنَا مُحمَّد. ";
+                        Azkar1.Text = azkar17;
+
+                        break;
+                    case 18:
+                        string azkar18 = "اللَّهُمَّ إِنَّا نَعُوذُ بِكَ مِنْ أَنْ نُشْرِكَ بِكَ شَيْئًا نَعْلَمُهُ ، وَنَسْتَغْفِرُكَ لِمَا لَا نَعْلَمُهُ. ";
+                        Azkar1.Text = azkar18;
+
+                        break;
+
+                    case 19:
+                        string azkar19 = "يَا رَبِّ , لَكَ الْحَمْدُ كَمَا يَنْبَغِي لِجَلَالِ وَجْهِكَ , وَلِعَظِيمِ سُلْطَانِكَ. ";
+                        Azkar1.Text = azkar19;
+
+                        break;
+                    case 20:
+                        string azkar20 = "لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ. ";
+                        Azkar1.Text = azkar20;
+
+                        break;
+
+                    case 21:
+                        string azkar21 = "أسْتَغْفِرُ اللهَ وَأتُوبُ إلَيْهِ ";
+                        Azkar1.Text = azkar21;
+
+                        break;
+                    case 22:
+                        string azkar22 = "سُبْحَانَ اللهِ العَظِيمِ وَبِحَمْدِهِ ";
+                        Azkar1.Text = azkar22;
+
+
+                        break;
+
+                    case 23:
+                        string azkar23 = "اللَّهُمَّ أَنْتَ رَبِّي لا إِلَهَ إِلا أَنْتَ ، عَلَيْكَ تَوَكَّلْتُ ، وَأَنْتَ رَبُّ الْعَرْشِ الْعَظِيمِ , مَا شَاءَ اللَّهُ كَانَ ، وَمَا لَمْ يَشَأْ لَمْ يَكُنْ ، وَلا حَوْلَ وَلا قُوَّةَ إِلا بِاللَّهِ الْعَلِيِّ الْعَظِيمِ , أَعْلَمُ أَنَّ اللَّهَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ ، وَأَنَّ اللَّهَ قَدْ أَحَاطَ بِكُلِّ شَيْءٍ عِلْمًا , اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي ، وَمِنْ شَرِّ كُلِّ دَابَّةٍ أَنْتَ آخِذٌ بِنَاصِيَتِهَا ، إِنَّ رَبِّي عَلَى صِرَاطٍ مُسْتَقِيمٍ.";
+                        Azkar1.Text = azkar23;
+                        break;
+
+
+                    default:
+                        break;
+                }
+                int Minute = DateTime.Now.Minute;
+                if (Minute <= 5)
+                {
+                    Azkar2.Text = "لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ";
+                }
+                else if (Minute <= 10)
+                {
+                    Azkar2.Text = "سُبْحـانَ اللهِ وَبِحَمْـدِهِ";
+                }
+                else if (Minute <= 15)
+                {
+                    Azkar2.Text = "سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ ";
+                }
+                else if (Minute <= 20)
+                {
+                    Azkar2.Text = "سُبْحَانَ اللهِ العَظِيمِ وَبِحَمْدِهِ ";
+                }
+                else if (Minute <= 25)
+                {
+                    Azkar2.Text = "لا حَوْلَ وَلا قُوَّةَ إِلا بِاللَّهِ";
+                }
+                else if (Minute <= 30)
+                {
+                    Azkar2.Text = "الْلَّهُم صَلِّ وَسَلِم وَبَارِك عَلَى سَيِّدِنَا مُحَمَّد";
+                }
+                else if (Minute <= 35)
+                {
+                    Azkar2.Text = "أسْتَغْفِرُ اللهَ وَأتُوبُ إلَيْهِ";
+                }
+                else if (Minute <= 40)
+                {
+                    Azkar2.Text = "سُبْحَانَ الْلَّهِ، وَالْحَمْدُ لِلَّهِ، وَلَا إِلَهَ إِلَّا الْلَّهُ، وَالْلَّهُ أَكْبَرُ ";
+                }
+                else if (Minute <= 45)
+                {
+                    Azkar2.Text = "سُبْحَانَ اللَّهِ ، وَالْحَمْدُ لِلَّهِ ، وَلا إِلَهَ إِلا اللَّهُ ، وَاللَّهُ أَكْبَرُ ، اللَّهُمَّ اغْفِرْ لِي ، اللَّهُمَّ ارْحَمْنِي ، اللَّهُمَّ ارْزُقْنِ";
+                }
+                else if (Minute <= 50)
+                {
+                    Azkar2.Text = "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ , وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ , اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ";
+                }
+                else if (Minute <= 55)
+                {
+                    Azkar2.Text = "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ ، سُبْحَانَ اللَّهِ الْعَظِيمِ ";
+                }
+                else if (Minute <= 60)
+                {
+                    Azkar2.Text = "رَضيـتُ بِاللهِ رَبَّـاً وَبِالإسْلامِ ديـناً وَبِمُحَـمَّدٍ صلى الله عليه وسلم نَبِيّـا";
+                }
+            });
+
+        }
+
+        async void Button_Clicked(System.Object sender, System.EventArgs e)
+        {
+            //var permission = await Xamarin.Essentials.Permissions.RequestAsync<Xamarin.Essentials.Permissions.LocationAlways>();
+
+            //if (permission == Xamarin.Essentials.PermissionStatus.Denied)
+            //{
+            //    TODO Let the user know they need to accept
+            //    return;
+            //}
+
+            if (Device.RuntimePlatform == Device.iOS)
+            {
+              
+            }
+            else if (Device.RuntimePlatform == Device.Android)
+            {
+                if (Preferences.Get("AzkarServiceRunning", false) == false)
+                {
+                    StartService();
+                    aTimer.Start();
+                }
+                else
+                {
+                    StopService();
+                    aTimer.Stop();
+                }
+            }
+        }
+
+        private void StartService()
+        {
+            var startServiceMessage = new StartServiceMessage();
+            MessagingCenter.Send(startServiceMessage, "ServiceStarted");
+            Preferences.Set("AzkarServiceRunning", true);
+
+            DependencyService.Get<Toasts>().Show("بدأت خدمة أذكار!");
+        }
+
+        private void StopService()
+        {
+            var stopServiceMessage = new StopServiceMessage();
+            MessagingCenter.Send(stopServiceMessage, "ServiceStopped");
+            Preferences.Set("AzkarServiceRunning", false);
+        }
+
+    
+
+        private void Button_Clicked_1(object sender, EventArgs e)
+        {
+            i++;
+            number.Text = $"{i}";
+        }
+
+        private void Button_Clicked_2(object sender, EventArgs e)
+        {
+            i = 0;
+            number.Text = $"{i}";
+        }
+    }
+}

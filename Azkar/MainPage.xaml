@@ -1,0 +1,26 @@
+﻿
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Azkar.MainPage">
+
+    <StackLayout BackgroundColor="Black">
+        <Frame BackgroundColor="Black" Padding="24" CornerRadius="0">
+            <Label Text="أذكار" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
+        </Frame>
+        <Button BackgroundColor="Black" TextColor="White" Text="بدء /توقف" Clicked="Button_Clicked" />
+        <Label  HorizontalTextAlignment="Center" TextColor="White" x:Name="Times"></Label>
+        <Label TextColor="White" x:Name="number"></Label>
+        <StackLayout Padding="10">
+            <Label x:Name="Azkar1"  TextColor="White" LineHeight="1.8"   Margin="5" LineBreakMode="WordWrap"
+      />
+        </StackLayout>
+        <StackLayout Padding="25">
+            <Label   x:Name="Azkar2"  TextColor="White" LineHeight="1.8"   LineBreakMode="WordWrap" Margin="5"
+       />
+        </StackLayout>
+        <StackLayout>
+            <Button Padding="30" BackgroundColor="Black" TextColor="White" Text="اذكر الله" Clicked="Button_Clicked_1"></Button>
+            <Button Padding="30" BackgroundColor="Black" TextColor="White" Text="مسح" Clicked="Button_Clicked_2"></Button>
+        </StackLayout>
+    </StackLayout>
+</ContentPage>
