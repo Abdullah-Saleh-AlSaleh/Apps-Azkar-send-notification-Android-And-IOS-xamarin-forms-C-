@@ -22,7 +22,7 @@ namespace Azkar.Droid
     public class AndroidNotification : ICustomNotification
     {
         const string channel_id = "default";
-        const string channel_name = "Azkar";
+        const string channel_name = "أذكار";
         int notify_index = 0;
 
         public void send(string title, string message)
@@ -32,7 +32,7 @@ namespace Azkar.Droid
             var channelNameJava = new Java.Lang.String(channel_name);
             var channel = new NotificationChannel(channel_id, channelNameJava, NotificationImportance.High)
             {
-                Description = "Azkar Service Notification"
+                Description = "إشعار خدمة الأذكار"
             };
 
             manager.CreateNotificationChannel(channel);

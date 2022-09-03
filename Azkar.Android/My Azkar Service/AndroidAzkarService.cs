@@ -152,7 +152,7 @@ namespace Azkar.Droid
 
 				var intent = new Intent(context, typeof(MainActivity));
 				intent.AddFlags(ActivityFlags.SingleTop);
-				intent.PutExtra("AzkarBackground", "Message");
+				intent.PutExtra("خدمات الأذكار", "Message");
 
 				var pendingIntent = PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.UpdateCurrent);
             numMessages = 0;
@@ -170,7 +170,7 @@ namespace Azkar.Droid
 
             if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.O)
 				{
-					NotificationChannel notificationChannel = new NotificationChannel(foregroundChannelId, "AzkarBackground", NotificationImportance.High);
+					NotificationChannel notificationChannel = new NotificationChannel(foregroundChannelId, "خدمات الأذكار", NotificationImportance.High);
 					notificationChannel.Importance = NotificationImportance.High;
 					notificationChannel.EnableLights(true);
 					notificationChannel.EnableVibration(true);

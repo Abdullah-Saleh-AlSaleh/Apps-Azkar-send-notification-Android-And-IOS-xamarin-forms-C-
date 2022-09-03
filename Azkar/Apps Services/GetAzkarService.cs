@@ -26,7 +26,7 @@ namespace Azkar.Apps_Services
                     token.ThrowIfCancellationRequested();
                     try
                     {
-                        await Task.Delay(2000);
+                        await Task.Delay(999);
 
 
 
@@ -180,8 +180,6 @@ namespace Azkar.Apps_Services
                                             break;
 
 
-                                        default:
-                                            break;
                                     }
 
 
