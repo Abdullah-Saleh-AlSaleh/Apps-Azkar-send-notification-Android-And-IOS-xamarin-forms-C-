@@ -26,7 +26,7 @@ namespace Azkar.Apps_Services
                     token.ThrowIfCancellationRequested();
                     try
                     {
-                        await Task.Delay(999);
+                        await Task.Delay(500);
 
 
 
